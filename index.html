@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Proyecto De Vida</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Mi Proyecto de Vida ✨</h1>
+            <p>Construye tu futuro, paso a paso</p>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" data-section="inicio">🏠 Inicio</button>
+            <button class="nav-btn" data-section="proyecto">📝 Mi Proyecto</button>
+            <button class="nav-btn" data-section="metas">🎯 Metas</button>
+            <button class="nav-btn" data-section="emociones">💭 Emociones</button>
+        </nav>
+
+        <div class="content">
+            <!-- Sección Inicio -->
+            <div id="inicio" class="section active">
+                <h2 style="margin-bottom: 30px; color: #333;">Resumen de tu Proyecto de Vida</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="total-metas">0</h3>
+                        <p>Metas Creadas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="total-emociones">0</h3>
+                        <p>Emociones Registradas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="metas-completadas">0</h3>
+                        <p>Metas Completadas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="progreso-proyecto">0%</h3>
+                        <p>Progreso del Proyecto</p>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; color: #333;">📋 Últimas Metas</h3>
+                <div id="resumen-metas" class="items-list"></div>
+
+                <h3 style="margin: 30px 0 20px; color: #333;">💫 Últimas Emociones</h3>
+                <div id="resumen-emociones" class="items-list"></div>
+
+                <h3 style="margin: 30px 0 20px; color: #333;">📖 Resumen de tu Proyecto de Vida</h3>
+                <div id="resumen-proyecto" class="project-summary"></div>
+            </div>
+
+            <!-- Sección Mi Proyecto de Vida -->
+            <div id="proyecto" class="section">
+                <h2 style="margin-bottom: 40px; color: #333;">📝 Mi Proyecto de Vida Completo</h2>
+                
+                <div class="project-container">
+                    <!-- Editor de Proyecto Principal -->
+                    <div class="project-editor">
+                        <form id="form-proyecto">
+                            <div class="editor-header">
+                                <h3>✍️ Escribe tu Proyecto de Vida</h3>
+                                <div class="editor-tools">
+                                    <button type="button" class="tool-btn" data-action="bold" title="Negrita">
+                                        <strong>B</strong>
+                                    </button>
+                                    <button type="button" class="tool-btn" data-action="italic" title="Cursiva">
+                                        <em>I</em>
+                                    </button>
+                                    <button type="button" class="tool-btn" data-action="underline" title="Subrayado">
+                                        <u>U</u>
+                                    </button>
+                                    <button type="button" class="tool-btn" data-action="list" title="Lista">
+                                        📋
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>🎯 Mi Visión Personal</label>
+                                <textarea id="proyecto-vision" placeholder="¿Cómo te ves en 5-10 años? ¿Cuál es tu visión de vida ideal?"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>🎯 Mis Objetivos a Largo Plazo</label>
+                                <textarea id="proyecto-objetivos" placeholder="Describe tus objetivos principales para los próximos años..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>💪 Mis Fortalezas y Talentos</label>
+                                <textarea id="proyecto-fortalezas" placeholder="¿Cuáles son tus principales fortalezas, talentos y habilidades?"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>🎯 Mis Valores Fundamentales</label>
+                                <textarea id="proyecto-valores" placeholder="¿Qué valores son más importantes para ti en la vida?"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>🚀 Mi Plan de Acción</label>
+                                <textarea id="proyecto-plan" placeholder="Describe los pasos concretos que tomarás para alcanzar tus objetivos..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>📊 Mi Progreso y Reflexiones</label>
+                                <textarea id="proyecto-progreso" placeholder="Reflexiona sobre tu progreso, aprendizajes y próximos pasos..."></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">💾 Guardar Proyecto</button>
+                                <button type="button" class="export-btn" onclick="exportarProyecto()">📤 Exportar</button>
+                                <button type="button" class="import-btn" onclick="importarProyecto()">📥 Importar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Panel de Objetivos SMART -->
+                    <div class="smart-objectives">
+                        <h3>🎯 Objetivos SMART</h3>
+                        <div class="objectives-list" id="objetivos-smart">
+                            <!-- Los objetivos SMART se agregarán dinámicamente -->
+                        </div>
+                        
+                        <form id="form-objetivo-smart" class="smart-form">
+                            <h4>Agregar Nuevo Objetivo SMART</h4>
+                            <div class="smart-grid">
+                                <div class="form-group">
+                                    <label>Objetivo</label>
+                                    <input type="text" id="objetivo-texto" placeholder="¿Qué quieres lograr?" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Medible</label>
+                                    <input type="text" id="objetivo-medible" placeholder="¿Cómo lo medirás?" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha Límite</label>
+                                    <input type="date" id="objetivo-fecha" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">Agregar Objetivo</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Visualización del Proyecto -->
+                <div class="project-display">
+                    <h3>📖 Vista Previa de tu Proyecto</h3>
+                    <div id="vista-proyecto" class="project-preview"></div>
+                </div>
+            </div>
+
+            <!-- Sección Metas -->
+            <div id="metas" class="section">
+                <h2 style="margin-bottom: 30px; color: #333;">🎯 Mis Metas</h2>
+                
+                <form id="form-meta" style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 20px; color: #333;">Agregar Nueva Meta</h3>
+                    
+                    <div class="form-group">
+                        <label>Título de la Meta</label>
+                        <input type="text" id="meta-titulo" required placeholder="Ej: Aprender un nuevo idioma">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="meta-descripcion" required placeholder="Describe tu meta en detalle..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prioridad</label>
+                        <select id="meta-prioridad" required>
+                            <option value="high">🔴 Alta</option>
+                            <option value="medium">🟡 Media</option>
+                            <option value="low">🔵 Baja</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha Límite</label>
+                        <input type="date" id="meta-fecha" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Agregar Meta</button>
+                </form>
+
+                <h3 style="margin-bottom: 20px; color: #333;">Tus Metas</h3>
+                <div id="lista-metas" class="items-list"></div>
+            </div>
+
+            <!-- Sección Emociones -->
+            <div id="emociones" class="section">
+                <h2 style="margin-bottom: 30px; color: #333;">💭 Mis Emociones</h2>
+                
+                <form id="form-emocion" style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 20px; color: #333;">Registrar Emoción</h3>
+                    
+                    <div class="form-group">
+                        <label>¿Cómo te sientes hoy?</label>
+                        <select id="emocion-tipo" required>
+                            <option value="feliz">😊 Feliz</option>
+                            <option value="motivado">💪 Motivado</option>
+                            <option value="ansioso">😰 Ansioso</option>
+                            <option value="tranquilo">😌 Tranquilo</option>
+                            <option value="triste">😢 Triste</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿Qué te hizo sentir así?</label>
+                        <textarea id="emocion-descripcion" required placeholder="Cuéntame sobre tu día..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Registrar Emoción</button>
+                </form>
+
+                <h3 style="margin-bottom: 20px; color: #333;">Tu Diario Emocional</h3>
+                <div id="lista-emociones" class="items-list"></div>
+            </div>
+        </div>
+    </div> 
+    <script src="app.js"></script>
+</body>
+</html>
