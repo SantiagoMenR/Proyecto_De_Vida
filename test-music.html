@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Música</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Prueba de Funcionalidad de Música</h1>
+        
+        <h3>1. Probar extracción de ID de YouTube</h3>
+        <input type="text" id="test-url" placeholder="Pega una URL de YouTube aquí..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        <button onclick="probarExtraccion()">Probar Extracción</button>
+        <div id="resultado-extraccion" class="result"></div>
+        
+        <h3>2. Probar reproducción</h3>
+        <button onclick="probarReproduccion()">Probar Reproducción</button>
+        <div id="resultado-reproduccion" class="result"></div>
+        
+        <h3>3. Probar elementos del DOM</h3>
+        <button onclick="probarElementos()">Verificar Elementos</button>
+        <div id="resultado-elementos" class="result"></div>
+    </div>
+
+    <script>
+        // Función de extracción de ID (copiada del código principal)
+        function extraerIdYouTube(url) {
+            const patterns = [
+                /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+                /youtube\.com\/watch\?v=([^"&?\/\s]{11})/,
+                /youtu\.be\/([^"&?\/\s]{11})/,
+                /youtube\.com\/embed\/([^"&?\/\s]{11})/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+            
+            return null;
+        }
+
+        function probarExtraccion() {
+            const url = document.getElementById('test-url').value;
+            const videoId = extraerIdYouTube(url);
+            
+            document.getElementById('resultado-extraccion').innerHTML = `
+                <strong>URL:</strong> ${url}<br>
+                <strong>Video ID extraído:</strong> ${videoId || 'No se pudo extraer'}<br>
+                <strong>URL de embed:</strong> ${videoId ? `https://www.youtube.com/embed/${videoId}` : 'N/A'}
+            `;
+        }
+
+        function probarReproduccion() {
+            const url = document.getElementById('test-url').value;
+            const videoId = extraerIdYouTube(url);
+            
+            if (videoId) {
+                // Crear un iframe de prueba
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+                iframe.width = '560';
+                iframe.height = '315';
+                iframe.frameborder = '0';
+                iframe.allowfullscreen = true;
+                
+                const resultado = document.getElementById('resultado-reproduccion');
+                resultado.innerHTML = '<strong>Reproduciendo video:</strong><br>';
+                resultado.appendChild(iframe);
+            } else {
+                document.getElementById('resultado-reproduccion').innerHTML = 
+                    '<strong>Error:</strong> No se pudo extraer el ID del video';
+            }
+        }
+
+        function probarElementos() {
+            const elementos = {
+                'music-floating-btn': document.getElementById('music-floating-btn'),
+                'music-modal': document.getElementById('music-modal'),
+                'youtube-player-modal': document.getElementById('youtube-player-modal'),
+                'youtube-player': document.getElementById('youtube-player'),
+                'recent-songs-list': document.getElementById('recent-songs-list')
+            };
+            
+            let html = '<strong>Estado de los elementos:</strong><br>';
+            for (const [nombre, elemento] of Object.entries(elementos)) {
+                html += `${nombre}: ${elemento ? '✅ Encontrado' : '❌ No encontrado'}<br>`;
+            }
+            
+            document.getElementById('resultado-elementos').innerHTML = html;
+        }
+
+        // Ejecutar prueba inicial
+        window.onload = function() {
+            probarExtraccion();
+            probarElementos();
+        };
+    </script>
+</body>
+</html>

@@ -912,6 +912,918 @@ nav button.active {
     color: #17a2b8;
 }
 
+/* Estilos para el botón flotante y modales de música */
+.music-floating-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-floating-btn:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+}
+
+.music-floating-btn:active {
+    transform: translateY(-1px) scale(1.05);
+}
+
+/* Botón de control de música */
+.music-control-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    color: white;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+.music-control-btn:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 12px 35px rgba(220, 53, 69, 0.6);
+}
+
+.music-control-btn:active {
+    transform: translateY(-1px) scale(1.05);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.8), 0 0 0 10px rgba(220, 53, 69, 0.1);
+    }
+    100% {
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    }
+}
+
+/* Modal de música */
+.music-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.music-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: slideInUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-header h3 {
+    color: #333;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.youtube-form {
+    margin-bottom: 30px;
+}
+
+.youtube-form h4 {
+    color: #333;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    font-size: 1em;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: rgba(102, 126, 234, 0.8);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 15px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.add-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.recent-history h4 {
+    color: #333;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.songs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.empty-history p {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.empty-history small {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.song-item {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.song-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.song-info h5 {
+    color: #333;
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.song-info p {
+    color: #666;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.play-song-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.play-song-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+.edit-song-btn {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-song-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
+}
+
+.delete-song-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.delete-song-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+}
+
+/* Modal del reproductor de YouTube */
+.youtube-player-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 3000;
+    animation: fadeIn 0.3s ease;
+}
+
+.youtube-player-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    animation: slideInUp 0.3s ease;
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.player-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.stop-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stop-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+}
+
+.player-header h4 {
+    color: #333;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.player-body {
+    padding: 30px;
+}
+
+.player-body iframe {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para Película Mental */
+.movie-creator {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.upload-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.image-upload-area {
+    border: 3px dashed rgba(102, 126, 234, 0.5);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.image-upload-area:hover {
+    border-color: rgba(102, 126, 234, 0.8);
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.image-upload-area.dragover {
+    border-color: rgba(102, 126, 234, 1);
+    background: rgba(102, 126, 234, 0.2);
+    transform: scale(1.02);
+}
+
+.upload-content {
+    pointer-events: none;
+}
+
+.upload-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.upload-content h4 {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.upload-content p {
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+.upload-content small {
+    color: #999;
+    font-size: 0.9em;
+}
+
+.upload-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.upload-btn, .clear-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.clear-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.upload-btn:hover, .clear-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.clear-btn:hover {
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+.images-gallery {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.empty-gallery {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.empty-gallery p {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.empty-gallery small {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.image-item {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.image-item:hover img {
+    transform: scale(1.1);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.image-item:hover .image-overlay {
+    opacity: 1;
+}
+
+.remove-image-btn {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.remove-image-btn:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: scale(1.1);
+}
+
+.movie-settings {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 10px 0;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#duration-value {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.create-movie-btn, .preview-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 18px 35px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.preview-btn {
+    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+    box-shadow: 0 8px 20px rgba(23, 162, 184, 0.3);
+}
+
+.create-movie-btn::before, .preview-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.create-movie-btn:hover::before, .preview-btn:hover::before {
+    left: 100%;
+}
+
+.create-movie-btn:hover, .preview-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
+}
+
+.preview-btn:hover {
+    box-shadow: 0 12px 30px rgba(23, 162, 184, 0.4);
+}
+
+/* Reproductor de película */
+.movie-player {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    margin-top: 30px;
+}
+
+.player-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.movie-screen {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.movie-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: all 0.8s ease;
+    background: #000;
+}
+
+.movie-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.3) 100%);
+    pointer-events: none;
+}
+
+.movie-title-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 1.5em;
+    font-weight: 600;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.movie-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.movie-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.control-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stop-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.stop-btn:hover {
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+.time-display {
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9em;
+    min-width: 100px;
+    text-align: center;
+}
+
+
+/* Efectos de transición */
+.transition-fade {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+.transition-slide {
+    transform: translateX(100%);
+    animation: slideIn 0.8s ease-in-out forwards;
+}
+
+.transition-zoom {
+    transform: scale(0.8);
+    animation: zoomIn 0.8s ease-in-out forwards;
+}
+
+.transition-rotate {
+    transform: rotate(180deg) scale(0.8);
+    animation: rotateIn 0.8s ease-in-out forwards;
+}
+
+.transition-flip {
+    transform: rotateY(180deg);
+    animation: flipIn 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    to { transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+    to { transform: scale(1); }
+}
+
+@keyframes rotateIn {
+    to { transform: rotate(0deg) scale(1); }
+}
+
+@keyframes flipIn {
+    to { transform: rotateY(0deg); }
+}
+
 /* Responsive para la sección del proyecto */
 @media (max-width: 768px) {
     .project-container {
@@ -934,5 +1846,100 @@ nav button.active {
     
     .smart-grid {
         grid-template-columns: 1fr;
+    }
+    
+    /* Responsive para música */
+    .music-floating-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .input-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .add-btn {
+        width: 100%;
+    }
+    
+    .song-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .song-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .player-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .player-body {
+        padding: 20px;
+    }
+    
+    /* Responsive para Película Mental */
+    .upload-section, .images-gallery, .movie-settings, .movie-player {
+        padding: 20px;
+    }
+    
+    .image-upload-area {
+        padding: 40px 20px;
+    }
+    
+    .upload-icon {
+        font-size: 3em;
+    }
+    
+    .upload-content h4 {
+        font-size: 1.3em;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .movie-actions {
+        flex-direction: column;
+    }
+    
+    .create-movie-btn, .preview-btn {
+        width: 100%;
+    }
+    
+    .movie-screen {
+        height: 250px;
+    }
+    
+    .player-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .control-btn {
+        width: 100%;
+    }
+    
+    .progress-bar {
+        width: 100%;
     }
 }

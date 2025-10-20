@@ -11,6 +11,16 @@ let proyectoVida = {
     fechaActualizacion: ''
 };
 let objetivosSMART = [];
+let cancionesRecientes = [];
+let musicaReproduciendo = false;
+let videoIdActual = null;
+
+// Variables para Película Mental
+let imagenesCargadas = [];
+let peliculaActual = null;
+let reproduciendoPelicula = false;
+let intervaloReproduccion = null;
+let indiceImagenActual = 0;
 
 // Funciones para localStorage
 function guardarMetas() {
@@ -56,6 +66,18 @@ function cargarObjetivosSMART() {
         objetivosSMART = JSON.parse(objetivosGuardados);
     }
 }
+
+function guardarCancionesRecientes() {
+    localStorage.setItem('proyectoVida_cancionesRecientes', JSON.stringify(cancionesRecientes));
+}
+
+function cargarCancionesRecientes() {
+    const cancionesGuardadas = localStorage.getItem('proyectoVida_cancionesRecientes');
+    if (cancionesGuardadas) {
+        cancionesRecientes = JSON.parse(cancionesGuardadas);
+    }
+}
+
 
 // Navegación entre secciones
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -151,6 +173,340 @@ document.getElementById('form-objetivo-smart').addEventListener('submit', (e) =>
     actualizarInicio();
     e.target.reset();
 });
+
+// Configurar funcionalidad de música
+function configurarMusica() {
+    const musicBtn = document.getElementById('music-floating-btn');
+    const musicModal = document.getElementById('music-modal');
+    const closeModal = document.getElementById('close-modal');
+    const addYoutubeBtn = document.getElementById('add-youtube-btn');
+    const youtubeUrlInput = document.getElementById('youtube-url-input');
+    const youtubePlayerModal = document.getElementById('youtube-player-modal');
+    const closePlayer = document.getElementById('close-player');
+    
+    // Abrir modal de música
+    if (musicBtn) {
+        musicBtn.addEventListener('click', () => {
+            musicModal.classList.add('show');
+            actualizarHistorialCanciones();
+        });
+    }
+    
+    // Cerrar modal de música
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            musicModal.classList.remove('show');
+        });
+    }
+    
+    // Cerrar modal al hacer clic fuera
+    if (musicModal) {
+        musicModal.addEventListener('click', (e) => {
+            if (e.target === musicModal) {
+                musicModal.classList.remove('show');
+            }
+        });
+    }
+    
+    // Agregar canción de YouTube
+    if (addYoutubeBtn) {
+        addYoutubeBtn.addEventListener('click', () => {
+            const url = youtubeUrlInput.value.trim();
+            const nombreCancion = document.getElementById('song-name-input').value.trim();
+            
+            if (!url) {
+                mostrarNotificacion('❌ Por favor ingresa una URL de YouTube', 'error');
+                return;
+            }
+            
+            const videoId = extraerIdYouTube(url);
+            if (!videoId) {
+                mostrarNotificacion('❌ URL de YouTube inválida', 'error');
+                return;
+            }
+            
+            agregarCancionReciente(url, videoId, nombreCancion || null);
+            youtubeUrlInput.value = '';
+            document.getElementById('song-name-input').value = '';
+            musicModal.classList.remove('show');
+            mostrarNotificacion('🎵 Canción agregada exitosamente', 'success');
+        });
+    }
+    
+    // Permitir agregar con Enter
+    if (youtubeUrlInput) {
+        youtubeUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addYoutubeBtn.click();
+            }
+        });
+    }
+    
+    const songNameInput = document.getElementById('song-name-input');
+    if (songNameInput) {
+        songNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addYoutubeBtn.click();
+            }
+        });
+    }
+    
+    // Cerrar modal del reproductor
+    if (closePlayer) {
+        closePlayer.addEventListener('click', () => {
+            youtubePlayerModal.classList.remove('show');
+            // No detener la música, solo cerrar el modal
+        });
+    }
+    
+    // Cerrar modal del reproductor al hacer clic fuera
+    if (youtubePlayerModal) {
+        youtubePlayerModal.addEventListener('click', (e) => {
+            if (e.target === youtubePlayerModal) {
+                youtubePlayerModal.classList.remove('show');
+                // No detener la música, solo cerrar el modal
+            }
+        });
+    }
+    
+    
+    // Botón de control de música
+    const musicControlBtn = document.getElementById('music-control-btn');
+    if (musicControlBtn) {
+        musicControlBtn.addEventListener('click', toggleReproduccion);
+    }
+}
+
+function extraerIdYouTube(url) {
+    const patterns = [
+        /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+        /youtube\.com\/watch\?v=([^"&?\/\s]{11})/,
+        /youtu\.be\/([^"&?\/\s]{11})/,
+        /youtube\.com\/embed\/([^"&?\/\s]{11})/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) {
+            return match[1];
+        }
+    }
+    
+    return null;
+}
+
+function agregarCancionReciente(url, videoId, nombrePersonalizado = null) {
+    const cancion = {
+        id: Date.now(),
+        url: url,
+        videoId: videoId,
+        nombre: nombrePersonalizado || `Video de YouTube`,
+        fechaAgregada: new Date().toLocaleDateString(),
+        horaAgregada: new Date().toLocaleTimeString()
+    };
+    
+    // Agregar al inicio del array
+    cancionesRecientes.unshift(cancion);
+    
+    // Mantener máximo 15 canciones
+    if (cancionesRecientes.length > 15) {
+        cancionesRecientes = cancionesRecientes.slice(0, 15);
+    }
+    
+    guardarCancionesRecientes();
+}
+
+function actualizarHistorialCanciones() {
+    console.log('Actualizando historial de canciones:', cancionesRecientes);
+    
+    const lista = document.getElementById('recent-songs-list');
+    
+    if (cancionesRecientes.length === 0) {
+        lista.innerHTML = `
+            <div class="empty-history">
+                <p>No hay canciones agregadas</p>
+                <small>Agrega una canción de YouTube para comenzar</small>
+            </div>
+        `;
+        return;
+    }
+    
+    const html = cancionesRecientes.map(cancion => `
+        <div class="song-item">
+            <div class="song-info">
+                <h5 class="song-title" id="song-title-${cancion.id}">${cancion.nombre}</h5>
+                <p>📅 ${cancion.fechaAgregada} - 🕐 ${cancion.horaAgregada}</p>
+            </div>
+            <div class="song-actions">
+                <button class="play-song-btn" onclick="reproducirCancion('${cancion.videoId}')">
+                    ▶️ Reproducir
+                </button>
+                <button class="edit-song-btn" onclick="editarNombreCancion(${cancion.id})">
+                    ✏️ Editar
+                </button>
+                <button class="delete-song-btn" onclick="eliminarCancionReciente(${cancion.id})">
+                    🗑️ Eliminar
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    console.log('HTML generado:', html);
+    lista.innerHTML = html;
+}
+
+function reproducirCancion(videoId) {
+    console.log('Reproduciendo canción con videoId:', videoId);
+    
+    const youtubePlayerModal = document.getElementById('youtube-player-modal');
+    const youtubePlayer = document.getElementById('youtube-player');
+    const currentSongTitle = document.getElementById('current-song-title');
+    
+    console.log('Elementos encontrados:', {
+        youtubePlayerModal: !!youtubePlayerModal,
+        youtubePlayer: !!youtubePlayer,
+        currentSongTitle: !!currentSongTitle
+    });
+    
+    if (!youtubePlayerModal) {
+        console.error('No se encontró el modal del reproductor');
+        mostrarNotificacion('❌ Error: Modal del reproductor no encontrado', 'error');
+        return;
+    }
+    
+    if (!youtubePlayer) {
+        console.error('No se encontró el iframe del reproductor');
+        mostrarNotificacion('❌ Error: Reproductor de YouTube no encontrado', 'error');
+        return;
+    }
+    
+    if (!videoId) {
+        console.error('VideoId no válido:', videoId);
+        mostrarNotificacion('❌ Error: ID del video no válido', 'error');
+        return;
+    }
+    
+    try {
+        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`;
+        console.log('URL del embed:', embedUrl);
+        
+        // Limpiar el iframe anterior
+        youtubePlayer.src = '';
+        
+        // Establecer la nueva URL
+        youtubePlayer.src = embedUrl;
+        
+        if (currentSongTitle) {
+            currentSongTitle.textContent = 'Reproduciendo video de YouTube...';
+        }
+        
+        // Mostrar el modal
+        youtubePlayerModal.classList.add('show');
+        
+        console.log('Modal abierto exitosamente');
+        mostrarNotificacion('🎵 Reproduciendo video de YouTube', 'success');
+        
+        // Actualizar estado de reproducción
+        musicaReproduciendo = true;
+        videoIdActual = videoId;
+        mostrarBotonControl();
+        
+    } catch (error) {
+        console.error('Error al reproducir:', error);
+        mostrarNotificacion('❌ Error al reproducir el video', 'error');
+    }
+}
+
+function eliminarCancionReciente(id) {
+    cancionesRecientes = cancionesRecientes.filter(c => c.id !== id);
+    guardarCancionesRecientes();
+    actualizarHistorialCanciones();
+    mostrarNotificacion('🗑️ Canción eliminada del historial', 'info');
+}
+
+function editarNombreCancion(id) {
+    const cancion = cancionesRecientes.find(c => c.id === id);
+    if (!cancion) return;
+    
+    const nuevoNombre = prompt('Editar nombre de la canción:', cancion.nombre);
+    
+    if (nuevoNombre !== null && nuevoNombre.trim() !== '') {
+        cancion.nombre = nuevoNombre.trim();
+        guardarCancionesRecientes();
+        actualizarHistorialCanciones();
+        mostrarNotificacion('✏️ Nombre actualizado', 'success');
+    }
+}
+
+// Funciones para el botón de control de música
+function mostrarBotonControl() {
+    const controlBtn = document.getElementById('music-control-btn');
+    if (controlBtn) {
+        controlBtn.style.display = 'flex';
+        actualizarIconoControl();
+    }
+}
+
+function ocultarBotonControl() {
+    const controlBtn = document.getElementById('music-control-btn');
+    if (controlBtn) {
+        controlBtn.style.display = 'none';
+    }
+}
+
+function actualizarIconoControl() {
+    const icon = document.getElementById('control-icon');
+    if (icon) {
+        icon.textContent = musicaReproduciendo ? '⏸️' : '▶️';
+    }
+}
+
+function toggleReproduccion() {
+    const youtubePlayerModal = document.getElementById('youtube-player-modal');
+    
+    if (musicaReproduciendo) {
+        // Pausar música
+        musicaReproduciendo = false;
+        actualizarIconoControl();
+        
+        // Mostrar modal para pausar
+        if (youtubePlayerModal) {
+            youtubePlayerModal.classList.add('show');
+        }
+        
+        mostrarNotificacion('⏸️ Música pausada', 'info');
+    } else {
+        // Reanudar música
+        musicaReproduciendo = true;
+        actualizarIconoControl();
+        
+        // Mostrar modal para reanudar
+        if (youtubePlayerModal) {
+            youtubePlayerModal.classList.add('show');
+        }
+        
+        mostrarNotificacion('▶️ Música reanudada', 'success');
+    }
+}
+
+function detenerMusicaCompletamente() {
+    musicaReproduciendo = false;
+    videoIdActual = null;
+    
+    const youtubePlayerModal = document.getElementById('youtube-player-modal');
+    const youtubePlayer = document.getElementById('youtube-player');
+    
+    if (youtubePlayerModal) {
+        youtubePlayerModal.classList.remove('show');
+    }
+    
+    if (youtubePlayer) {
+        youtubePlayer.src = '';
+    }
+    
+    ocultarBotonControl();
+    mostrarNotificacion('⏹️ Música detenida', 'info');
+}
 
 function actualizarMetas() {
     const lista = document.getElementById('lista-metas');
@@ -411,6 +767,7 @@ function exportarProyecto() {
         objetivosSMART,
         metas,
         emociones,
+        cancionesRecientes,
         fechaExportacion: new Date().toISOString()
     };
     
@@ -447,12 +804,14 @@ function importarProyecto() {
                 if (datos.objetivosSMART) objetivosSMART = datos.objetivosSMART;
                 if (datos.metas) metas = datos.metas;
                 if (datos.emociones) emociones = datos.emociones;
+                if (datos.cancionesRecientes) cancionesRecientes = datos.cancionesRecientes;
                 
                 // Guardar en localStorage
                 guardarProyecto();
                 guardarObjetivosSMART();
                 guardarMetas();
                 guardarEmociones();
+                guardarCancionesRecientes();
                 
                 // Actualizar interfaz
                 actualizarVistaProyecto();
@@ -500,6 +859,359 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
     }, 3000);
 }
 
+// ==================== FUNCIONES PARA PELÍCULA MENTAL ====================
+
+// Configurar funcionalidad de carga de imágenes
+function configurarCargaImagenes() {
+    const uploadArea = document.getElementById('image-upload-area');
+    const imageInput = document.getElementById('image-input');
+    const durationSlider = document.getElementById('image-duration');
+    const durationValue = document.getElementById('duration-value');
+    
+    // Drag and drop
+    if (uploadArea) {
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            procesarArchivosImagenes(files);
+        });
+    }
+    
+    // Input de archivos
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            procesarArchivosImagenes(files);
+        });
+    }
+    
+    // Slider de duración
+    if (durationSlider && durationValue) {
+        durationSlider.addEventListener('input', (e) => {
+            durationValue.textContent = `${e.target.value} segundos`;
+        });
+    }
+}
+
+// Procesar archivos de imágenes
+function procesarArchivosImagenes(files) {
+    const archivosValidos = files.filter(file => {
+        const esImagen = file.type.startsWith('image/');
+        const tamanoValido = file.size <= 10 * 1024 * 1024; // 10MB
+        
+        if (!esImagen) {
+            mostrarNotificacion(`❌ ${file.name} no es una imagen válida`, 'error');
+            return false;
+        }
+        
+        if (!tamanoValido) {
+            mostrarNotificacion(`❌ ${file.name} es demasiado grande (máx. 10MB)`, 'error');
+            return false;
+        }
+        
+        return true;
+    });
+    
+    archivosValidos.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const imagen = {
+                id: Date.now() + Math.random(),
+                nombre: file.name,
+                url: e.target.result,
+                archivo: file
+            };
+            
+            imagenesCargadas.push(imagen);
+            actualizarGaleriaImagenes();
+            mostrarNotificacion(`📸 ${file.name} agregada`, 'success');
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Actualizar galería de imágenes
+function actualizarGaleriaImagenes() {
+    const galleryGrid = document.getElementById('gallery-grid');
+    
+    if (!galleryGrid) return;
+    
+    if (imagenesCargadas.length === 0) {
+        galleryGrid.innerHTML = `
+            <div class="empty-gallery">
+                <p>No hay imágenes cargadas aún</p>
+                <small>Agrega imágenes para crear tu película mental</small>
+            </div>
+        `;
+        return;
+    }
+    
+    const html = imagenesCargadas.map(imagen => `
+        <div class="image-item" data-id="${imagen.id}">
+            <img src="${imagen.url}" alt="${imagen.nombre}">
+            <div class="image-overlay">
+                <button class="remove-image-btn" onclick="eliminarImagen('${imagen.id}')">
+                    🗑️
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    galleryGrid.innerHTML = html;
+}
+
+// Eliminar imagen de la galería
+function eliminarImagen(id) {
+    imagenesCargadas = imagenesCargadas.filter(img => img.id !== id);
+    actualizarGaleriaImagenes();
+    mostrarNotificacion('🗑️ Imagen eliminada', 'info');
+}
+
+// Limpiar todas las imágenes
+function limpiarImagenes() {
+    imagenesCargadas = [];
+    actualizarGaleriaImagenes();
+    mostrarNotificacion('🗑️ Todas las imágenes eliminadas', 'info');
+}
+
+// Crear película mental
+function crearPeliculaMental() {
+    if (imagenesCargadas.length === 0) {
+        mostrarNotificacion('❌ Necesitas cargar al menos una imagen', 'error');
+        return;
+    }
+    
+    const titulo = document.getElementById('movie-title').value || 'Mi Película Mental';
+    const duracion = parseInt(document.getElementById('image-duration').value);
+    const transicion = document.getElementById('transition-type').value;
+    
+    peliculaActual = {
+        titulo: titulo,
+        imagenes: [...imagenesCargadas],
+        duracionPorImagen: duracion,
+        tipoTransicion: transicion,
+        duracionTotal: imagenesCargadas.length * duracion,
+        fechaCreacion: new Date().toISOString()
+    };
+    
+    mostrarReproductorPelicula();
+    mostrarNotificacion('🎬 ¡Película mental creada exitosamente!', 'success');
+}
+
+// Mostrar reproductor de película
+function mostrarReproductorPelicula() {
+    const moviePlayer = document.getElementById('movie-player');
+    const movieTitleDisplay = document.getElementById('movie-title-display');
+    
+    if (moviePlayer && peliculaActual) {
+        moviePlayer.style.display = 'block';
+        movieTitleDisplay.textContent = peliculaActual.titulo;
+        
+        // Scroll suave hacia el reproductor
+        moviePlayer.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Vista previa de la película
+function previewPelicula() {
+    if (imagenesCargadas.length === 0) {
+        mostrarNotificacion('❌ Necesitas cargar al menos una imagen', 'error');
+        return;
+    }
+    
+    mostrarNotificacion('👁️ Iniciando vista previa...', 'info');
+    
+    // Crear una película temporal para vista previa
+    const peliculaPreview = {
+        titulo: 'Vista Previa',
+        imagenes: [...imagenesCargadas],
+        duracionPorImagen: 2, // Más rápida para vista previa
+        tipoTransicion: document.getElementById('transition-type').value,
+        duracionTotal: imagenesCargadas.length * 2
+    };
+    
+    peliculaActual = peliculaPreview;
+    mostrarReproductorPelicula();
+    
+    // Iniciar reproducción automática
+    setTimeout(() => {
+        reproducirPelicula();
+    }, 1000);
+}
+
+// Reproducir película
+function reproducirPelicula() {
+    if (!peliculaActual || peliculaActual.imagenes.length === 0) {
+        mostrarNotificacion('❌ No hay película para reproducir', 'error');
+        return;
+    }
+    
+    reproduciendoPelicula = true;
+    indiceImagenActual = 0;
+    
+    // Actualizar botón de reproducción
+    const playBtn = document.getElementById('play-btn');
+    if (playBtn) {
+        playBtn.innerHTML = '⏸️ Pausar';
+    }
+    
+    // Mostrar primera imagen
+    mostrarImagenActual();
+    
+    // Iniciar intervalo de reproducción
+    intervaloReproduccion = setInterval(() => {
+        siguienteImagen();
+    }, peliculaActual.duracionPorImagen * 1000);
+    
+    mostrarNotificacion('▶️ Reproduciendo película mental', 'success');
+}
+
+// Mostrar imagen actual
+function mostrarImagenActual() {
+    const movieScreen = document.getElementById('movie-screen');
+    const progressFill = document.getElementById('progress-fill');
+    const timeDisplay = document.getElementById('time-display');
+    
+    if (!movieScreen || !peliculaActual) return;
+    
+    const imagenActual = peliculaActual.imagenes[indiceImagenActual];
+    
+    // Crear elemento de imagen
+    const imgElement = document.createElement('img');
+    imgElement.src = imagenActual.url;
+    imgElement.alt = imagenActual.nombre;
+    
+    // Aplicar clase de transición
+    imgElement.className = `transition-${peliculaActual.tipoTransicion}`;
+    
+    // Limpiar pantalla y agregar nueva imagen
+    movieScreen.innerHTML = `
+        <div class="movie-overlay">
+            <div class="movie-title-display">${peliculaActual.titulo}</div>
+            <div class="movie-progress"></div>
+        </div>
+    `;
+    movieScreen.appendChild(imgElement);
+    
+    // Actualizar progreso
+    const progreso = ((indiceImagenActual + 1) / peliculaActual.imagenes.length) * 100;
+    if (progressFill) {
+        progressFill.style.width = `${progreso}%`;
+    }
+    
+    // Actualizar tiempo
+    const tiempoActual = (indiceImagenActual + 1) * peliculaActual.duracionPorImagen;
+    const tiempoTotal = peliculaActual.duracionTotal;
+    if (timeDisplay) {
+        timeDisplay.textContent = `${formatearTiempo(tiempoActual)} / ${formatearTiempo(tiempoTotal)}`;
+    }
+}
+
+// Siguiente imagen
+function siguienteImagen() {
+    if (!peliculaActual) return;
+    
+    indiceImagenActual++;
+    
+    if (indiceImagenActual >= peliculaActual.imagenes.length) {
+        // Película terminada
+        detenerPelicula();
+        mostrarNotificacion('🎬 ¡Película completada!', 'success');
+        return;
+    }
+    
+    mostrarImagenActual();
+}
+
+// Alternar reproducción/pausa
+function togglePlayPause() {
+    if (reproduciendoPelicula) {
+        pausarPelicula();
+    } else {
+        reproducirPelicula();
+    }
+}
+
+// Pausar película
+function pausarPelicula() {
+    reproduciendoPelicula = false;
+    
+    if (intervaloReproduccion) {
+        clearInterval(intervaloReproduccion);
+        intervaloReproduccion = null;
+    }
+    
+    const playBtn = document.getElementById('play-btn');
+    if (playBtn) {
+        playBtn.innerHTML = '▶️ Reproducir';
+    }
+    
+    mostrarNotificacion('⏸️ Película pausada', 'info');
+}
+
+// Detener película
+function detenerPelicula() {
+    reproduciendoPelicula = false;
+    indiceImagenActual = 0;
+    
+    if (intervaloReproduccion) {
+        clearInterval(intervaloReproduccion);
+        intervaloReproduccion = null;
+    }
+    
+    const playBtn = document.getElementById('play-btn');
+    if (playBtn) {
+        playBtn.innerHTML = '▶️ Reproducir';
+    }
+    
+    // Limpiar pantalla
+    const movieScreen = document.getElementById('movie-screen');
+    if (movieScreen) {
+        movieScreen.innerHTML = `
+            <div class="movie-overlay">
+                <div class="movie-title-display">${peliculaActual ? peliculaActual.titulo : 'Película Mental'}</div>
+                <div class="movie-progress"></div>
+            </div>
+        `;
+    }
+    
+    // Resetear progreso
+    const progressFill = document.getElementById('progress-fill');
+    const timeDisplay = document.getElementById('time-display');
+    
+    if (progressFill) {
+        progressFill.style.width = '0%';
+    }
+    
+    if (timeDisplay && peliculaActual) {
+        timeDisplay.textContent = `0:00 / ${formatearTiempo(peliculaActual.duracionTotal)}`;
+    }
+    
+    mostrarNotificacion('⏹️ Película detenida', 'info');
+}
+
+// Formatear tiempo
+function formatearTiempo(segundos) {
+    const minutos = Math.floor(segundos / 60);
+    const segs = Math.floor(segundos % 60);
+    return `${minutos}:${segs.toString().padStart(2, '0')}`;
+}
+
+
 // Inicializar aplicación
 function inicializarApp() {
     // Cargar datos desde localStorage
@@ -507,6 +1219,7 @@ function inicializarApp() {
     cargarEmociones();
     cargarProyecto();
     cargarObjetivosSMART();
+    cargarCancionesRecientes();
     
     // Cargar datos en formularios si existen
     if (proyectoVida.vision) document.getElementById('proyecto-vision').value = proyectoVida.vision;
@@ -515,6 +1228,12 @@ function inicializarApp() {
     if (proyectoVida.valores) document.getElementById('proyecto-valores').value = proyectoVida.valores;
     if (proyectoVida.plan) document.getElementById('proyecto-plan').value = proyectoVida.plan;
     if (proyectoVida.progreso) document.getElementById('proyecto-progreso').value = proyectoVida.progreso;
+    
+    // Configurar funcionalidad de música
+    configurarMusica();
+    
+    // Configurar funcionalidad de película mental
+    configurarCargaImagenes();
     
     // Actualizar la interfaz con los datos cargados
     actualizarMetas();
