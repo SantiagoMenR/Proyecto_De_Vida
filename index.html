@@ -13,12 +13,30 @@
             <p>Construye tu futuro, paso a paso</p>
         </header>
 
-        <nav>
-            <button class="nav-btn active" data-section="inicio">🏠 Inicio</button>
-            <button class="nav-btn" data-section="proyecto">📝 Mi Proyecto</button>
-            <button class="nav-btn" data-section="metas">🎯 Metas</button>
-            <button class="nav-btn" data-section="emociones">💭 Emociones</button>
-            <button class="nav-btn" data-section="pelicula">🎬 Película Mental</button>
+        <nav class="navbar">
+            <!-- Botón hamburguesa para móviles -->
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <!-- Logo/título para móviles -->
+            <div class="nav-brand">
+                <span class="nav-brand-text">Mi Proyecto</span>
+            </div>
+            
+            <!-- Menú de navegación -->
+            <div class="nav-menu" id="nav-menu">
+                <button class="nav-btn active" data-section="inicio">🏠 Inicio</button>
+                <button class="nav-btn" data-section="proyecto">📝 Mi Proyecto</button>
+                <button class="nav-btn" data-section="metas">🎯 Metas</button>
+                <button class="nav-btn" data-section="emociones">💭 Emociones</button>
+                <button class="nav-btn" data-section="pelicula">🎬 Película Mental</button>
+            </div>
+            
+            <!-- Overlay para cerrar menú en móviles -->
+            <div class="nav-overlay" id="nav-overlay"></div>
         </nav>
 
         <div class="content">
@@ -115,6 +133,7 @@
                                 <button type="submit" class="submit-btn">💾 Guardar Proyecto</button>
                                 <button type="button" class="export-btn" onclick="exportarProyecto()">📤 Exportar</button>
                                 <button type="button" class="import-btn" onclick="importarProyecto()">📥 Importar</button>
+                                <button type="button" class="clear-btn" onclick="limpiarLocalStorage()">🗑️ Limpiar Todo</button>
                             </div>
                         </form>
                     </div>
@@ -286,6 +305,27 @@
                                     <option value="zoom">🔍 Zoom</option>
                                     <option value="rotate">🌀 Rotación</option>
                                     <option value="flip">🔄 Volteo</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>📝 Incluir texto del proyecto de vida</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="incluir-texto" checked>
+                                        <span class="custom-checkbox"></span>
+                                        <span class="checkbox-text">Sincronizar con mi proyecto de vida</span>
+                                        <span class="checkbox-description">El texto de tu proyecto de vida aparecerá junto con las imágenes</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" id="config-texto" style="display: none;">
+                                <label>Estilo del texto</label>
+                                <select id="estilo-texto">
+                                    <option value="overlay">📄 Superpuesto en la imagen</option>
+                                    <option value="alternating">🔄 Alternar imagen y texto</option>
+                                    <option value="side">↔️ Lado a lado</option>
                                 </select>
                             </div>
                             

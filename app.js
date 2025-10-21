@@ -80,17 +80,80 @@ function cargarCancionesRecientes() {
 
 
 // Navegación entre secciones
-document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const section = btn.dataset.section;
-        
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(section).classList.add('active');
+function configurarNavegacion() {
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+    const navOverlay = document.getElementById('nav-overlay');
+    
+    // Función para cerrar el menú móvil
+    function cerrarMenuMovil() {
+        if (navMenu && hamburgerBtn && navOverlay) {
+            navMenu.classList.remove('active');
+            hamburgerBtn.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    
+    // Función para abrir el menú móvil
+    function abrirMenuMovil() {
+        if (navMenu && hamburgerBtn && navOverlay) {
+            navMenu.classList.add('active');
+            hamburgerBtn.classList.add('active');
+            navOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    // Event listeners para botones de navegación
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.dataset.section;
+            
+            // Actualizar botones activos
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Actualizar secciones activas
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            
+            // Cerrar menú móvil después de seleccionar
+            cerrarMenuMovil();
+        });
     });
-});
+    
+    // Event listener para botón hamburguesa
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            if (navMenu.classList.contains('active')) {
+                cerrarMenuMovil();
+            } else {
+                abrirMenuMovil();
+            }
+        });
+    }
+    
+    // Event listener para overlay (cerrar al hacer clic fuera)
+    if (navOverlay) {
+        navOverlay.addEventListener('click', cerrarMenuMovil);
+    }
+    
+    // Cerrar menú al redimensionar ventana (si se vuelve desktop)
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            cerrarMenuMovil();
+        }
+    });
+    
+    // Cerrar menú con tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            cerrarMenuMovil();
+        }
+    });
+}
 
 // Formulario de Metas
 document.getElementById('form-meta').addEventListener('submit', (e) => {
@@ -839,6 +902,110 @@ function importarProyecto() {
     input.click();
 }
 
+// Función para limpiar localStorage
+function limpiarLocalStorage() {
+    // Mostrar confirmación antes de limpiar
+    const confirmacion = confirm(
+        '⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos guardados permanentemente.\n\n' +
+        'Se eliminará:\n' +
+        '• Tu proyecto de vida completo\n' +
+        '• Todas tus metas\n' +
+        '• Todas tus emociones\n' +
+        '• Todos tus objetivos SMART\n' +
+        '• Tu historial de música\n' +
+        '• Todas las imágenes de películas mentales\n\n' +
+        '¿Estás seguro de que quieres continuar?'
+    );
+    
+    if (!confirmacion) {
+        mostrarNotificacion('❌ Operación cancelada', 'info');
+        return;
+    }
+    
+    // Segunda confirmación para mayor seguridad
+    const segundaConfirmacion = confirm(
+        '🚨 ÚLTIMA CONFIRMACIÓN 🚨\n\n' +
+        'Esta acción NO se puede deshacer.\n' +
+        'Todos tus datos se perderán para siempre.\n\n' +
+        '¿Realmente quieres eliminar todo?'
+    );
+    
+    if (!segundaConfirmacion) {
+        mostrarNotificacion('❌ Operación cancelada', 'info');
+        return;
+    }
+    
+    try {
+        // Limpiar todas las claves del localStorage relacionadas con la aplicación
+        const clavesParaLimpiar = [
+            'proyectoVida_metas',
+            'proyectoVida_emociones', 
+            'proyectoVida_proyecto',
+            'proyectoVida_objetivosSMART',
+            'proyectoVida_cancionesRecientes'
+        ];
+        
+        clavesParaLimpiar.forEach(clave => {
+            localStorage.removeItem(clave);
+        });
+        
+        // Resetear variables en memoria
+        metas = [];
+        emociones = [];
+        proyectoVida = {
+            vision: '',
+            objetivos: '',
+            fortalezas: '',
+            valores: '',
+            plan: '',
+            progreso: '',
+            fechaActualizacion: ''
+        };
+        objetivosSMART = [];
+        cancionesRecientes = [];
+        imagenesCargadas = [];
+        peliculaActual = null;
+        
+        // Limpiar formularios
+        document.getElementById('proyecto-vision').value = '';
+        document.getElementById('proyecto-objetivos').value = '';
+        document.getElementById('proyecto-fortalezas').value = '';
+        document.getElementById('proyecto-valores').value = '';
+        document.getElementById('proyecto-plan').value = '';
+        document.getElementById('proyecto-progreso').value = '';
+        
+        // Actualizar todas las vistas
+        actualizarMetas();
+        actualizarEmociones();
+        actualizarVistaProyecto();
+        actualizarObjetivosSMART();
+        actualizarInicio();
+        actualizarGaleriaImagenes();
+        
+        // Limpiar reproductor de película si está visible
+        const moviePlayer = document.getElementById('movie-player');
+        if (moviePlayer) {
+            moviePlayer.style.display = 'none';
+        }
+        
+        // Detener música si está reproduciéndose
+        if (musicaReproduciendo) {
+            detenerMusicaCompletamente();
+        }
+        
+        mostrarNotificacion('🗑️ Todos los datos han sido eliminados exitosamente', 'success');
+        
+        // Mostrar mensaje adicional
+        setTimeout(() => {
+            mostrarNotificacion('✨ La aplicación ha sido restablecida a su estado inicial', 'info');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error al limpiar localStorage:', error);
+        mostrarNotificacion('❌ Error al limpiar los datos', 'error');
+    }
+}
+
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo = 'info') {
     const notificacion = document.createElement('div');
@@ -867,6 +1034,8 @@ function configurarCargaImagenes() {
     const imageInput = document.getElementById('image-input');
     const durationSlider = document.getElementById('image-duration');
     const durationValue = document.getElementById('duration-value');
+    const incluirTextoCheckbox = document.getElementById('incluir-texto');
+    const configTexto = document.getElementById('config-texto');
     
     // Drag and drop
     if (uploadArea) {
@@ -903,6 +1072,17 @@ function configurarCargaImagenes() {
     if (durationSlider && durationValue) {
         durationSlider.addEventListener('input', (e) => {
             durationValue.textContent = `${e.target.value} segundos`;
+        });
+    }
+    
+    // Checkbox para incluir texto
+    if (incluirTextoCheckbox && configTexto) {
+        incluirTextoCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                configTexto.style.display = 'block';
+            } else {
+                configTexto.style.display = 'none';
+            }
         });
     }
 }
@@ -988,6 +1168,83 @@ function limpiarImagenes() {
     mostrarNotificacion('🗑️ Todas las imágenes eliminadas', 'info');
 }
 
+// Obtener texto del proyecto de vida para la película
+function obtenerTextoProyectoVida() {
+    const textoCompleto = [];
+    
+    if (proyectoVida.vision && proyectoVida.vision.trim() !== '') {
+        textoCompleto.push({
+            titulo: "Mi Visión Personal",
+            contenido: proyectoVida.vision
+        });
+    }
+    
+    if (proyectoVida.objetivos && proyectoVida.objetivos.trim() !== '') {
+        textoCompleto.push({
+            titulo: "Mis Objetivos",
+            contenido: proyectoVida.objetivos
+        });
+    }
+    
+    if (proyectoVida.fortalezas && proyectoVida.fortalezas.trim() !== '') {
+        textoCompleto.push({
+            titulo: "Mis Fortalezas",
+            contenido: proyectoVida.fortalezas
+        });
+    }
+    
+    if (proyectoVida.valores && proyectoVida.valores.trim() !== '') {
+        textoCompleto.push({
+            titulo: "Mis Valores",
+            contenido: proyectoVida.valores
+        });
+    }
+    
+    if (proyectoVida.plan && proyectoVida.plan.trim() !== '') {
+        textoCompleto.push({
+            titulo: "Mi Plan de Acción",
+            contenido: proyectoVida.plan
+        });
+    }
+    
+    return textoCompleto;
+}
+
+// Obtener texto específico para una imagen según su índice
+function obtenerTextoParaImagen(indiceImagen) {
+    if (!peliculaActual || !peliculaActual.textoProyecto || peliculaActual.textoProyecto.length === 0) {
+        return null;
+    }
+    
+    // Distribuir el texto entre las imágenes
+    const indiceTexto = indiceImagen % peliculaActual.textoProyecto.length;
+    return peliculaActual.textoProyecto[indiceTexto];
+}
+
+// Agregar texto a la pantalla según el estilo configurado
+function agregarTextoAPantalla(movieScreen, texto, estilo) {
+    if (!texto) return;
+    
+    const textoElement = document.createElement('div');
+    textoElement.className = `movie-text movie-text-${estilo}`;
+    
+    textoElement.innerHTML = `
+        <div class="text-title">${texto.titulo}</div>
+        <div class="text-content">${texto.contenido}</div>
+    `;
+    
+    // Solo agregar el texto según el estilo
+    if (estilo === 'alternating') {
+        // Para alternar, solo mostrar texto en imágenes impares
+        if (indiceImagenActual % 2 === 1) {
+            movieScreen.appendChild(textoElement);
+        }
+    } else {
+        // Para overlay y side, siempre mostrar
+        movieScreen.appendChild(textoElement);
+    }
+}
+
 // Crear película mental
 function crearPeliculaMental() {
     if (imagenesCargadas.length === 0) {
@@ -998,6 +1255,11 @@ function crearPeliculaMental() {
     const titulo = document.getElementById('movie-title').value || 'Mi Película Mental';
     const duracion = parseInt(document.getElementById('image-duration').value);
     const transicion = document.getElementById('transition-type').value;
+    const incluirTexto = document.getElementById('incluir-texto').checked;
+    const estiloTexto = document.getElementById('estilo-texto').value;
+    
+    // Obtener texto del proyecto de vida si está habilitado
+    const textoProyecto = incluirTexto ? obtenerTextoProyectoVida() : [];
     
     peliculaActual = {
         titulo: titulo,
@@ -1005,6 +1267,9 @@ function crearPeliculaMental() {
         duracionPorImagen: duracion,
         tipoTransicion: transicion,
         duracionTotal: imagenesCargadas.length * duracion,
+        incluirTexto: incluirTexto,
+        estiloTexto: estiloTexto,
+        textoProyecto: textoProyecto,
         fechaCreacion: new Date().toISOString()
     };
     
@@ -1035,13 +1300,20 @@ function previewPelicula() {
     
     mostrarNotificacion('👁️ Iniciando vista previa...', 'info');
     
+    const incluirTexto = document.getElementById('incluir-texto').checked;
+    const estiloTexto = document.getElementById('estilo-texto').value;
+    const textoProyecto = incluirTexto ? obtenerTextoProyectoVida() : [];
+    
     // Crear una película temporal para vista previa
     const peliculaPreview = {
         titulo: 'Vista Previa',
         imagenes: [...imagenesCargadas],
         duracionPorImagen: 2, // Más rápida para vista previa
         tipoTransicion: document.getElementById('transition-type').value,
-        duracionTotal: imagenesCargadas.length * 2
+        duracionTotal: imagenesCargadas.length * 2,
+        incluirTexto: incluirTexto,
+        estiloTexto: estiloTexto,
+        textoProyecto: textoProyecto
     };
     
     peliculaActual = peliculaPreview;
@@ -1105,6 +1377,13 @@ function mostrarImagenActual() {
             <div class="movie-progress"></div>
         </div>
     `;
+    
+    // Agregar contenido según el estilo configurado
+    if (peliculaActual.incluirTexto && peliculaActual.textoProyecto.length > 0) {
+        const textoActual = obtenerTextoParaImagen(indiceImagenActual);
+        agregarTextoAPantalla(movieScreen, textoActual, peliculaActual.estiloTexto);
+    }
+    
     movieScreen.appendChild(imgElement);
     
     // Actualizar progreso
@@ -1234,6 +1513,9 @@ function inicializarApp() {
     
     // Configurar funcionalidad de película mental
     configurarCargaImagenes();
+    
+    // Configurar navegación
+    configurarNavegacion();
     
     // Actualizar la interfaz con los datos cargados
     actualizarMetas();
