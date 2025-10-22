@@ -1261,16 +1261,35 @@ function crearPeliculaMental() {
     // Obtener texto del proyecto de vida si está habilitado
     const textoProyecto = incluirTexto ? obtenerTextoProyectoVida() : [];
     
+    // URLs de gifs de caleidoscopio (usando giphy)
+    const gifInicial = {
+        id: 'gif-inicio',
+        nombre: 'Caleidoscopio Inicial',
+        url: 'https://cdn.pixabay.com/animation/2022/11/02/16/46/16-46-09-792_512.gif',
+        esGif: true
+    };
+    
+    const gifFinal = {
+        id: 'gif-final',
+        nombre: 'Caleidoscopio Final',
+        url: 'https://cdn.pixabay.com/animation/2024/08/25/21/22/21-22-40-262_512.gif',
+        esGif: true
+    };
+    
+    // Crear array con gif inicial, imágenes del usuario y gif final
+    const imagenesConGifs = [gifInicial, ...imagenesCargadas, gifFinal];
+    
     peliculaActual = {
         titulo: titulo,
-        imagenes: [...imagenesCargadas],
+        imagenes: imagenesConGifs,
         duracionPorImagen: duracion,
         tipoTransicion: transicion,
-        duracionTotal: imagenesCargadas.length * duracion,
+        duracionTotal: imagenesConGifs.length * duracion,
         incluirTexto: incluirTexto,
         estiloTexto: estiloTexto,
         textoProyecto: textoProyecto,
-        fechaCreacion: new Date().toISOString()
+        fechaCreacion: new Date().toISOString(),
+        duracionGifs: 3 // Duración especial para los gifs (en segundos)
     };
     
     mostrarReproductorPelicula();
@@ -1361,27 +1380,54 @@ function mostrarImagenActual() {
     if (!movieScreen || !peliculaActual) return;
     
     const imagenActual = peliculaActual.imagenes[indiceImagenActual];
+    const esGif = imagenActual.esGif === true;
     
     // Crear elemento de imagen
     const imgElement = document.createElement('img');
     imgElement.src = imagenActual.url;
     imgElement.alt = imagenActual.nombre;
     
-    // Aplicar clase de transición
-    imgElement.className = `transition-${peliculaActual.tipoTransicion}`;
+    // Aplicar clase especial para gifs de caleidoscopio
+    if (esGif) {
+        imgElement.className = 'kaleidoscope-gif transition-fade';
+    } else {
+        imgElement.className = `transition-${peliculaActual.tipoTransicion}`;
+    }
     
     // Limpiar pantalla y agregar nueva imagen
     movieScreen.innerHTML = `
         <div class="movie-overlay">
-            <div class="movie-title-display">${peliculaActual.titulo}</div>
+            <div class="movie-title-display">${esGif ? '' : peliculaActual.titulo}</div>
             <div class="movie-progress"></div>
         </div>
     `;
     
-    // Agregar contenido según el estilo configurado
-    if (peliculaActual.incluirTexto && peliculaActual.textoProyecto.length > 0) {
+    // Agregar contenido según el estilo configurado (solo para imágenes del usuario, no para gifs)
+    if (!esGif && peliculaActual.incluirTexto && peliculaActual.textoProyecto.length > 0) {
         const textoActual = obtenerTextoParaImagen(indiceImagenActual);
         agregarTextoAPantalla(movieScreen, textoActual, peliculaActual.estiloTexto);
+    }
+    
+    // Agregar mensaje especial para el gif inicial
+    if (esGif && indiceImagenActual === 0) {
+        const mensajeInicial = document.createElement('div');
+        mensajeInicial.className = 'kaleidoscope-message';
+        mensajeInicial.innerHTML = `
+            <h2>✨ ${peliculaActual.titulo} ✨</h2>
+            <p>Prepárate para un viaje visual...</p>
+        `;
+        movieScreen.appendChild(mensajeInicial);
+    }
+    
+    // Agregar mensaje especial para el gif final
+    if (esGif && indiceImagenActual === peliculaActual.imagenes.length - 1) {
+        const mensajeFinal = document.createElement('div');
+        mensajeFinal.className = 'kaleidoscope-message';
+        mensajeFinal.innerHTML = `
+            <h2>🌟 Fin de tu Película Mental 🌟</h2>
+            <p>¡Sigue construyendo tu futuro!</p>
+        `;
+        movieScreen.appendChild(mensajeFinal);
     }
     
     movieScreen.appendChild(imgElement);

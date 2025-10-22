@@ -545,6 +545,7 @@ header p {
 .empty-state p {
     font-size: 1.2em;
     font-weight: 400;
+    color: white;
 }
 
 .emotion-badge {
@@ -1008,7 +1009,7 @@ header p {
 }
 
 .project-meta small {
-    color: #999;
+    color: white;
     font-size: 0.9em;
 }
 
@@ -1065,7 +1066,7 @@ header p {
 }
 
 .summary-meta small {
-    color: #999;
+    color: white;
     font-size: 0.9em;
 }
 
@@ -1648,11 +1649,13 @@ header p {
 }
 
 .empty-gallery p {
+    color: white;
     font-size: 1.1em;
     margin-bottom: 5px;
 }
 
 .empty-gallery small {
+    color: white;
     font-size: 0.9em;
     opacity: 0.8;
 }
@@ -1944,6 +1947,86 @@ header p {
     line-height: 1.3;
 }
 
+/* Estilos para gifs de caleidoscopio */
+.kaleidoscope-gif {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(1.1) contrast(1.2);
+    animation: kaleidoscopeZoom 3s ease-in-out;
+}
+
+@keyframes kaleidoscopeZoom {
+    0% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mensaje sobre los gifs de caleidoscopio */
+.kaleidoscope-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 15;
+    padding: 30px 40px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    animation: messageAppear 1s ease-in-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.kaleidoscope-message h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    animation: textGlow 2s ease-in-out infinite;
+}
+
+.kaleidoscope-message p {
+    font-size: 1.2em;
+    margin: 0;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+@keyframes messageAppear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes textGlow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(102, 126, 234, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(102, 126, 234, 0.8);
+    }
+}
+
 /* Estilos para el texto en la pantalla de película */
 .movie-text {
     position: absolute;
@@ -2078,6 +2161,21 @@ header p {
     }
     
     .movie-text-alternating .text-content {
+        font-size: 1em;
+    }
+    
+    /* Mensajes de caleidoscopio responsive */
+    .kaleidoscope-message {
+        padding: 20px 25px;
+        max-width: 85%;
+    }
+    
+    .kaleidoscope-message h2 {
+        font-size: 1.4em;
+        margin-bottom: 10px;
+    }
+    
+    .kaleidoscope-message p {
         font-size: 1em;
     }
 }
@@ -2453,5 +2551,20 @@ header p {
         font-size: 0.75em;
         margin-top: 2px;
         line-height: 1.2;
+    }
+    
+    /* Mensajes de caleidoscopio para móviles pequeños */
+    .kaleidoscope-message {
+        padding: 15px 20px;
+        max-width: 90%;
+    }
+    
+    .kaleidoscope-message h2 {
+        font-size: 1.2em;
+        margin-bottom: 8px;
+    }
+    
+    .kaleidoscope-message p {
+        font-size: 0.9em;
     }
 }
