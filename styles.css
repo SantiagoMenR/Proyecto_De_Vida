@@ -1191,6 +1191,23 @@ header p {
     border: 1px solid rgba(102, 126, 234, 0.2) !important;
     padding: 25px !important;
     min-width: 320px !important;
+    z-index: 10001 !important;
+}
+
+/* Overlay del tour */
+.driver-overlay {
+    z-index: 10000 !important;
+}
+
+/* Elemento destacado */
+.driver-active-element {
+    z-index: 10002 !important;
+    position: relative !important;
+}
+
+/* Asegurar que el botón hamburguesa sea visible durante el tour */
+#hamburger-btn.driver-active-element {
+    z-index: 10002 !important;
 }
 
 .driver-popover-title {

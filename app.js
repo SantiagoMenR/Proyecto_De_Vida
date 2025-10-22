@@ -1596,12 +1596,14 @@ function inicializarTourGuiado() {
                 }
             },
             {
-                element: '.navbar',
+                element: window.innerWidth <= 768 ? '#hamburger-btn' : '.navbar',
                 popover: {
-                    title: '🧭 Barra de Navegación',
-                    description: 'Aquí encontrarás todas las secciones de la aplicación. En dispositivos móviles, verás un menú hamburguesa para acceder fácilmente.',
-                    side: "bottom",
-                    align: 'center'
+                    title: window.innerWidth <= 768 ? '🍔 Menú de Navegación' : '🧭 Barra de Navegación',
+                    description: window.innerWidth <= 768 
+                        ? 'Toca este botón hamburguesa (☰) para abrir el menú de navegación. Desde aquí podrás acceder a todas las secciones: Inicio, Mi Proyecto, Metas, Emociones y Película Mental.' 
+                        : 'Aquí encontrarás todas las secciones de la aplicación. Puedes navegar fácilmente entre Inicio, Mi Proyecto, Metas, Emociones y Película Mental.',
+                    side: window.innerWidth <= 768 ? "right" : "bottom",
+                    align: 'start'
                 }
             },
             {
