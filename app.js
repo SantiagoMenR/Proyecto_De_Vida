@@ -1563,12 +1563,161 @@ function inicializarApp() {
     // Configurar navegación
     configurarNavegacion();
     
+    // Configurar botón del tour
+    configurarBotonTour();
+    
     // Actualizar la interfaz con los datos cargados
     actualizarMetas();
     actualizarEmociones();
     actualizarVistaProyecto();
     actualizarObjetivosSMART();
     actualizarInicio();
+    
+    // Verificar si es la primera vez para mostrar el tour
+    verificarPrimeraVez();
+}
+
+// ==================== TOUR GUIADO CON DRIVER.JS ====================
+
+function inicializarTourGuiado() {
+    const driver = window.driver.js.driver;
+    
+    const driverObj = driver({
+        showProgress: true,
+        showButtons: ['next', 'previous', 'close'],
+        steps: [
+            {
+                element: 'header',
+                popover: {
+                    title: '🌟 ¡Bienvenido a Mi Proyecto de Vida!',
+                    description: 'Esta aplicación te ayudará a planificar y visualizar tu futuro. Te guiaré por todas las funcionalidades para que aproveches al máximo esta herramienta.',
+                    side: "bottom",
+                    align: 'center'
+                }
+            },
+            {
+                element: '.navbar',
+                popover: {
+                    title: '🧭 Barra de Navegación',
+                    description: 'Aquí encontrarás todas las secciones de la aplicación. En dispositivos móviles, verás un menú hamburguesa para acceder fácilmente.',
+                    side: "bottom",
+                    align: 'center'
+                }
+            },
+            {
+                element: '[data-section="inicio"]',
+                popover: {
+                    title: '🏠 Sección de Inicio',
+                    description: 'Tu panel principal donde verás un resumen de todo: estadísticas, últimas metas, emociones registradas y el progreso de tu proyecto.',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+            {
+                element: '[data-section="proyecto"]',
+                popover: {
+                    title: '📝 Mi Proyecto de Vida',
+                    description: 'Aquí escribirás tu proyecto de vida completo: tu visión personal, objetivos, fortalezas, valores y plan de acción. Es el corazón de la aplicación.',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+            {
+                element: '[data-section="metas"]',
+                popover: {
+                    title: '🎯 Mis Metas',
+                    description: 'Define tus metas con título, descripción, prioridad y fecha límite. Podrás marcarlas como completadas y hacer seguimiento de tu progreso.',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+            {
+                element: '[data-section="emociones"]',
+                popover: {
+                    title: '💭 Registro de Emociones',
+                    description: 'Lleva un diario emocional registrando cómo te sientes cada día. Esto te ayudará a identificar patrones y mantener tu bienestar emocional.',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+            {
+                element: '[data-section="pelicula"]',
+                popover: {
+                    title: '🎬 Película Mental',
+                    description: 'Crea una película visual con tus imágenes de motivación. Incluye gifs de caleidoscopio al inicio y final, y sincroniza el texto de tu proyecto de vida con las imágenes.',
+                    side: "bottom",
+                    align: 'start'
+                }
+            },
+            {
+                element: '#music-floating-btn',
+                popover: {
+                    title: '🎵 Música de Ambiente',
+                    description: 'Agrega música de YouTube para crear un ambiente inspirador mientras trabajas en tu proyecto. Puedes guardar tus canciones favoritas.',
+                    side: "left",
+                    align: 'start'
+                }
+            },
+            {
+                element: '#tour-btn',
+                popover: {
+                    title: '❓ Tour Guiado',
+                    description: 'Este botón te permite volver a ver este tour guiado en cualquier momento. ¡Siempre estará aquí para ayudarte!',
+                    side: "left",
+                    align: 'start'
+                }
+            },
+            {
+                popover: {
+                    title: '🎉 ¡Listo para Comenzar!',
+                    description: 'Ya conoces todas las funcionalidades. Empieza definiendo tu proyecto de vida y luego ve agregando metas, emociones y creando tu película mental. ¡Tu futuro te espera!',
+                    side: "center",
+                    align: 'center'
+                }
+            }
+        ],
+        nextBtnText: 'Siguiente →',
+        prevBtnText: '← Anterior',
+        doneBtnText: '¡Empezar! ✨',
+        closeBtnText: '✕',
+        progressText: '{{current}} de {{total}}',
+        onDestroyStarted: () => {
+            // Guardar que el usuario ya vio el tour
+            localStorage.setItem('proyectoVida_tourVisto', 'true');
+            driverObj.destroy();
+        }
+    });
+    
+    return driverObj;
+}
+
+// Función para iniciar el tour
+function iniciarTour() {
+    const tour = inicializarTourGuiado();
+    tour.drive();
+}
+
+// Verificar si es la primera vez del usuario
+function verificarPrimeraVez() {
+    const tourVisto = localStorage.getItem('proyectoVida_tourVisto');
+    
+    if (!tourVisto) {
+        // Mostrar el tour automáticamente después de 1 segundo
+        setTimeout(() => {
+            iniciarTour();
+        }, 1000);
+    }
+}
+
+// Configurar botón del tour
+function configurarBotonTour() {
+    const tourBtn = document.getElementById('tour-btn');
+    
+    if (tourBtn) {
+        tourBtn.addEventListener('click', () => {
+            iniciarTour();
+        });
+    }
 }
 
 // Inicializar cuando se carga la página
